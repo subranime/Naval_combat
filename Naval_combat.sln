@@ -4,11 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naval_combat", "Naval_combat\Naval_combat.csproj", "{E581E7AB-F99A-4CF8-9CD8-5640A645C429}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naval_combat_server", "Naval_combat_server\Naval_combat_server.csproj", "{4FB70E8F-FF84-498F-8491-92A98A5E2D1C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{E581E7AB-F99A-4CF8-9CD8-5640A645C429} = {E581E7AB-F99A-4CF8-9CD8-5640A645C429}
+		{4FB70E8F-FF84-498F-8491-92A98A5E2D1C} = {4FB70E8F-FF84-498F-8491-92A98A5E2D1C}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naval_combat_server", "Naval_combat_server\Naval_combat_server.csproj", "{4FB70E8F-FF84-498F-8491-92A98A5E2D1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
