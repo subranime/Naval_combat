@@ -3,6 +3,7 @@ using System;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 class Server
 {
@@ -47,7 +48,18 @@ class Server
 
                 Console.WriteLine("Клиент подключен. Ожидание данных...");
 
-                //TODO код для обработки подключенного клиента
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = sslStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    Console.WriteLine($"Получено от клиента: {receivedData}");
+
+                    //TODO код для обработки полученных данных
+                }
+
+                Console.WriteLine("Соединение с клиентом разорвано.");
             }
         }
         catch (Exception ex)

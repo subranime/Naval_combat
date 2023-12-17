@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -41,6 +42,10 @@ namespace Naval_combat
 
                 AppendToLog("Успешное подключение к серверу.");
 
+                Task.Run(() => ListenForMessages());
+
+                ConnectButton.Enabled = false;
+                SendDataButton.Enabled = true;
                 //TODO код для обмена данными с сервером
             }
             catch (Exception ex)
@@ -64,6 +69,61 @@ namespace Naval_combat
         {
             //TODO код для проверки сертификата сервера
             return true;
+        }
+
+        private void SendDataButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string dataToSend = "Hello, server!";
+                byte[] dataBytes = Encoding.UTF8.GetBytes(dataToSend);
+
+                // Отправка данных на сервер
+                sslStream.Write(dataBytes, 0, dataBytes.Length);
+                sslStream.Flush();
+
+                AppendToLog($"Отправлено на сервер: {dataToSend}");
+            }
+            catch (IOException ex) when (ex.InnerException is System.Net.Sockets.SocketException)
+            {
+                AppendToLog("Ошибка отправки данных: Соединение с сервером разорвано.");
+            }
+            catch (Exception ex)
+            {
+                AppendToLog($"Ошибка отправки данных: {ex.Message}");
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Закрываем соединение при закрытии формы
+            if (tcpClient != null && tcpClient.Connected)
+            {
+                tcpClient.Close();
+            }
+        }
+
+        private void ListenForMessages()
+        {
+            try
+            {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = sslStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    AppendToLog($"Получено от сервера: {receivedData}");
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                AppendToLog("Соединение с сервером разорвано.");
+            }
+            catch (Exception ex)
+            {
+                AppendToLog($"Ошибка при чтении данных: {ex.Message}");
+            }
         }
     }
 }
