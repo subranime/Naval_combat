@@ -52,6 +52,9 @@ class Server
                 logger.Log(LogLevel.Info, "Клиент подключен. Ожидание данных...");
                 Console.WriteLine("Клиент подключен. Ожидание данных...");
 
+                // Чтение никнейма от клиента
+                string nickname = ReadNickname(sslStream);
+
                 byte[] buffer = new byte[4096];
                 int bytesRead;
 
@@ -59,13 +62,13 @@ class Server
                 {
                     string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-                    logger.Log(LogLevel.Info, $"Получено от клиента: {receivedData}");
-                    Console.WriteLine($"Получено от клиента: {receivedData}");
+                    logger.Log(LogLevel.Info, $"Получено от клиента {nickname}: {receivedData}");
+                    Console.WriteLine($"Получено от клиента {nickname}: {receivedData}");
 
                     //TODO код для обработки полученных данных
                 }
-                logger.Log(LogLevel.Info, "Соединение с клиентом разорвано.");
-                Console.WriteLine("Соединение с клиентом разорвано.");
+                logger.Log(LogLevel.Info, $"Соединение с клиентом {nickname} разорвано.");
+                Console.WriteLine($"Соединение с клиентом {nickname} разорвано.");
             }
         }
         catch (Exception ex)
@@ -73,6 +76,19 @@ class Server
             logger.LogException(ex, "Ошибка обработки клиента");
             Console.WriteLine($"Ошибка обработки клиента: {ex.Message}");
         }
+    }
+
+    private string ReadNickname(SslStream sslStream)
+    {
+        // Ваш код для чтения никнейма от клиента (например, считывание строки из sslStream)
+        // Замените этот код на фактическую реализацию ввода никнейма.
+
+        // Пример:
+        byte[] nicknameBuffer = new byte[256];
+        int bytesRead = sslStream.Read(nicknameBuffer, 0, nicknameBuffer.Length);
+        string nickname = Encoding.UTF8.GetString(nicknameBuffer, 0, bytesRead);
+
+        return nickname;
     }
 
     private bool ValidateClientCertificate(

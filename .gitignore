@@ -6,6 +6,8 @@
 # .gitignore
 AppSettings.cs
 Certificate/
+client_log.txt
+server_log.txt
 
 # User-specific files
 *.rsuser
