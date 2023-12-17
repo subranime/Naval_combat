@@ -28,18 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.ConnectButton = new System.Windows.Forms.Button();
             this.SendDataButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(523, 328);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(244, 96);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
             // 
             // ConnectButton
             // 
@@ -68,7 +59,6 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.SendDataButton);
             this.Controls.Add(this.ConnectButton);
-            this.Controls.Add(this.richTextBox1);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -77,8 +67,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button ConnectButton;
         private System.Windows.Forms.Button SendDataButton;
     }

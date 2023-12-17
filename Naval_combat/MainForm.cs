@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Naval_combat;
 
 namespace Naval_combat
 {
@@ -18,11 +19,13 @@ namespace Naval_combat
     {
         private TcpClient tcpClient;
         private SslStream sslStream;
+        private Logger logger;
 
         public MainForm()
         {
             InitializeComponent();
             this.tcpClient = new TcpClient();
+            this.logger = new Logger(LogLevel.Info, $"{AppSettings.LogPath}client_log.txt");
         }
 
         private void ConnectButton_Click(object sender, EventArgs e)
@@ -40,7 +43,8 @@ namespace Naval_combat
 
                 this.sslStream.AuthenticateAsClient("YourServerName");
 
-                AppendToLog("Успешное подключение к серверу.");
+                logger.Log(LogLevel.Info, "Успешное подключение к серверу.");
+
 
                 Task.Run(() => ListenForMessages());
 
@@ -50,14 +54,8 @@ namespace Naval_combat
             }
             catch (Exception ex)
             {
-                AppendToLog($"Ошибка подключения: {ex.Message}");
+                logger.LogException(ex, "Ошибка подключения");
             }
-        }
-
-        private void AppendToLog(string message)
-        {
-            // TODO заменить на нормальное логгирование
-            richTextBox1.AppendText($"{DateTime.Now:HH:mm:ss} - {message}\n");
         }
 
         private bool ValidateServerCertificate(
@@ -82,15 +80,15 @@ namespace Naval_combat
                 sslStream.Write(dataBytes, 0, dataBytes.Length);
                 sslStream.Flush();
 
-                AppendToLog($"Отправлено на сервер: {dataToSend}");
+                logger.Log(LogLevel.Info, $"Отправлено на сервер: {dataToSend}");
             }
             catch (IOException ex) when (ex.InnerException is System.Net.Sockets.SocketException)
             {
-                AppendToLog("Ошибка отправки данных: Соединение с сервером разорвано.");
+                logger.LogException(ex, "Ошибка отправки данных: Соединение с сервером разорвано.");
             }
             catch (Exception ex)
             {
-                AppendToLog($"Ошибка отправки данных: {ex.Message}");
+                logger.LogException(ex, "Ошибка отправки данных");
             }
         }
 
@@ -113,16 +111,16 @@ namespace Naval_combat
                 while ((bytesRead = sslStream.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    AppendToLog($"Получено от сервера: {receivedData}");
+                    logger.Log(LogLevel.Info, $"Получено от сервера: {receivedData}");
                 }
             }
             catch (ObjectDisposedException)
             {
-                AppendToLog("Соединение с сервером разорвано.");
+                logger.Log(LogLevel.Error, "Соединение с сервером разорвано");
             }
             catch (Exception ex)
             {
-                AppendToLog($"Ошибка при чтении данных: {ex.Message}");
+                logger.LogException(ex, "Ошибка при чтении данных");
             }
         }
     }

@@ -9,16 +9,19 @@ class Server
 {
     private TcpListener tcpListener;
     private X509Certificate serverCertificate;
+    private Logger logger;
 
     public Server(X509Certificate certificate)
     {
         this.tcpListener = new TcpListener(System.Net.IPAddress.Any, 7777);
         this.serverCertificate = certificate;
+        this.logger = new Logger(LogLevel.Info, $"{AppSettings.LogPath}server_log.txt");
     }
 
     public void Start()
     {
         this.tcpListener.Start();
+        logger.Log(LogLevel.Info, "Сервер запущен. Ожидание подключений...");
         Console.WriteLine("Сервер запущен. Ожидание подключений...");
 
         while (true)
@@ -46,6 +49,7 @@ class Server
                     true
                 );
 
+                logger.Log(LogLevel.Info, "Клиент подключен. Ожидание данных...");
                 Console.WriteLine("Клиент подключен. Ожидание данных...");
 
                 byte[] buffer = new byte[4096];
@@ -54,16 +58,19 @@ class Server
                 while ((bytesRead = sslStream.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                    logger.Log(LogLevel.Info, $"Получено от клиента: {receivedData}");
                     Console.WriteLine($"Получено от клиента: {receivedData}");
 
                     //TODO код для обработки полученных данных
                 }
-
+                logger.Log(LogLevel.Info, "Соединение с клиентом разорвано.");
                 Console.WriteLine("Соединение с клиентом разорвано.");
             }
         }
         catch (Exception ex)
         {
+            logger.LogException(ex, "Ошибка обработки клиента");
             Console.WriteLine($"Ошибка обработки клиента: {ex.Message}");
         }
     }
@@ -81,6 +88,7 @@ class Server
 
     public static void Main(string[] args)
     {
+
         // Создаем экземпляр класса Server и запускаем сервер
         var serverCertificate = new X509Certificate2(AppSettings.CertificatePath, AppSettings.CertificatePassword);
         var server = new Server(serverCertificate);
