@@ -10,11 +10,16 @@ using System.Threading.Tasks;
 
 namespace Naval_combat
 {
+    // Полный код TcpClientManager
     public class TcpClientManager
     {
         private TcpClient tcpClient;
         private SslStream sslStream;
         private Logger logger;
+        private string nickname;
+
+        // Событие для оповещения о получении сообщения от сервера
+        public event Action<string> MessageReceived;
 
         public TcpClientManager(Logger logger)
         {
@@ -22,11 +27,11 @@ namespace Naval_combat
             this.logger = logger;
         }
 
-        public bool Connect(string ipAddress, int port)
+        public async Task<bool> ConnectAsync(string ipAddress, int port, string userNickname)
         {
             try
             {
-                tcpClient.Connect(ipAddress, port);
+                await tcpClient.ConnectAsync(ipAddress, port);
 
                 sslStream = new SslStream(
                     tcpClient.GetStream(),
@@ -35,11 +40,14 @@ namespace Naval_combat
                     null
                 );
 
-                sslStream.AuthenticateAsClient("YourServerName");
+                await sslStream.AuthenticateAsClientAsync("YourServerName");
 
                 logger.Log(LogLevel.Info, "Успешное подключение к серверу.");
 
+                // Запускаем асинхронный метод для прослушивания сообщений
                 Task.Run(() => ListenForMessages());
+
+                nickname = userNickname;
 
                 return true;
             }
@@ -54,7 +62,9 @@ namespace Naval_combat
         {
             try
             {
-                byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+                // Добавляем никнейм к данным перед отправкой
+                string dataWithNickname = $"{nickname}: {data}";
+                byte[] dataBytes = Encoding.UTF8.GetBytes(dataWithNickname);
 
                 sslStream.Write(dataBytes, 0, dataBytes.Length);
                 sslStream.Flush();
@@ -81,7 +91,7 @@ namespace Naval_combat
                 while ((bytesRead = sslStream.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    logger.Log(LogLevel.Info, $"Получено от сервера: {receivedData}");
+                    MessageReceived?.Invoke(receivedData);
                 }
             }
             catch (ObjectDisposedException)
@@ -121,4 +131,5 @@ namespace Naval_combat
             }
         }
     }
+
 }

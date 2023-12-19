@@ -28,46 +28,58 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ConnectButton = new System.Windows.Forms.Button();
-            this.SendDataButton = new System.Windows.Forms.Button();
+            this.Start_game_button = new System.Windows.Forms.Button();
+            this.gamePictureBox = new System.Windows.Forms.PictureBox();
+            this.Shoot_button = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // ConnectButton
+            // Start_game_button
             // 
-            this.ConnectButton.Location = new System.Drawing.Point(73, 352);
-            this.ConnectButton.Name = "ConnectButton";
-            this.ConnectButton.Size = new System.Drawing.Size(96, 38);
-            this.ConnectButton.TabIndex = 1;
-            this.ConnectButton.Text = "Соеденить с сервером";
-            this.ConnectButton.UseVisualStyleBackColor = true;
-            this.ConnectButton.Click += new System.EventHandler(this.ConnectButton_Click);
+            this.Start_game_button.Location = new System.Drawing.Point(554, 237);
+            this.Start_game_button.Name = "Start_game_button";
+            this.Start_game_button.Size = new System.Drawing.Size(98, 38);
+            this.Start_game_button.TabIndex = 2;
+            this.Start_game_button.Text = "Старт";
+            this.Start_game_button.UseVisualStyleBackColor = true;
+            this.Start_game_button.Click += new System.EventHandler(this.StartGameButton_Click);
             // 
-            // SendDataButton
+            // gamePictureBox
             // 
-            this.SendDataButton.Location = new System.Drawing.Point(238, 352);
-            this.SendDataButton.Name = "SendDataButton";
-            this.SendDataButton.Size = new System.Drawing.Size(98, 38);
-            this.SendDataButton.TabIndex = 2;
-            this.SendDataButton.Text = "Отправить данные";
-            this.SendDataButton.UseVisualStyleBackColor = true;
-            this.SendDataButton.Click += new System.EventHandler(this.SendDataButton_Click);
+            this.gamePictureBox.Location = new System.Drawing.Point(12, 12);
+            this.gamePictureBox.Name = "gamePictureBox";
+            this.gamePictureBox.Size = new System.Drawing.Size(500, 500);
+            this.gamePictureBox.TabIndex = 3;
+            this.gamePictureBox.TabStop = false;
+            // 
+            // Shoot_button
+            // 
+            this.Shoot_button.Location = new System.Drawing.Point(211, 518);
+            this.Shoot_button.Name = "Shoot_button";
+            this.Shoot_button.Size = new System.Drawing.Size(108, 41);
+            this.Shoot_button.TabIndex = 4;
+            this.Shoot_button.Text = "Выстрел";
+            this.Shoot_button.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.SendDataButton);
-            this.Controls.Add(this.ConnectButton);
+            this.ClientSize = new System.Drawing.Size(800, 607);
+            this.Controls.Add(this.Shoot_button);
+            this.Controls.Add(this.gamePictureBox);
+            this.Controls.Add(this.Start_game_button);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Button ConnectButton;
-        private System.Windows.Forms.Button SendDataButton;
+        private System.Windows.Forms.Button Start_game_button;
+        private System.Windows.Forms.PictureBox gamePictureBox;
+        private System.Windows.Forms.Button Shoot_button;
     }
 }

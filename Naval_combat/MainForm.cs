@@ -19,27 +19,29 @@ namespace Naval_combat
     {
         private TcpClientManager tcpClientManager;
         private Logger logger;
+        private GameClient gameClient;
 
         public MainForm()
         {
             InitializeComponent();
             this.logger = new Logger(LogLevel.Info, $"{AppSettings.LogPath}client_log.txt");
             this.tcpClientManager = new TcpClientManager(logger);
+            this.gameClient = new GameClient(tcpClientManager, gamePictureBox);
+
+            ConnectToServer();
         }
 
-        private void ConnectButton_Click(object sender, EventArgs e)
+        private async void ConnectToServer()
         {
-            if (tcpClientManager.Connect("127.0.0.1", 7777))
+            if (await gameClient.ConnectAsync("127.0.0.1", 7777, AppSettings.NickName))
             {
-                ConnectButton.Enabled = false;
-                SendDataButton.Enabled = true;
-                //TODO код для обмена данными с сервером
+                Start_game_button.Enabled = true;
             }
         }
 
-        private void SendDataButton_Click(object sender, EventArgs e)
+        private void StartGameButton_Click(object sender, EventArgs e)
         {
-            tcpClientManager.SendData("Hello, server!");
+            gameClient.StartGame();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
