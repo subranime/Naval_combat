@@ -1,4 +1,4 @@
-﻿namespace Naval_combat
+﻿namespace Naval_combat.UI
 {
     partial class MainForm
     {

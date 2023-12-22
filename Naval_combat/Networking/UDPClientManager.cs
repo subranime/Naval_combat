@@ -3,9 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Naval_combat;
+using Naval_combat.Common;
 
-namespace Naval_combat
+namespace Naval_combat.Networking
 {
     public class UDPClientManager
     {

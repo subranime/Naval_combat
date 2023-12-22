@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 
-namespace Naval_combat
+namespace Naval_combat.Common
 {
     public enum LogLevel
     {

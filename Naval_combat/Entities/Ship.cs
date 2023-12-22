@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Naval_combat
+namespace Naval_combat.Entities
 {
     public class Ship
     {

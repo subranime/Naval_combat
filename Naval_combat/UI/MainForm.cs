@@ -11,9 +11,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Naval_combat;
+using Naval_combat.Common;
+using Naval_combat.Networking;
 
-namespace Naval_combat
+namespace Naval_combat.UI
 {
     public partial class MainForm : Form
     {
