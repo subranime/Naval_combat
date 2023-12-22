@@ -1,4 +1,7 @@
-﻿using Naval_combat_server;
+﻿using Naval_combat_server.Common;
+using Naval_combat_server.GameLogic;
+using Naval_combat_server.Networking;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Security;
@@ -10,7 +13,8 @@ class Program
 {
     public static void Main(string[] args)
     {
-        UDPManager udpManager = new UDPManager(49153);
+        GameEngine gameEngine = new GameEngine();
+        UDPManager udpManager = new UDPManager(49153, gameEngine);
         udpManager.DataReceived += OnDataReceived;
 
         // Основная логика сервера
@@ -19,8 +23,17 @@ class Program
         udpManager.Close();
     }
 
+
     static void OnDataReceived(string data, IPEndPoint clientEndPoint)
     {
-        Console.WriteLine($"Received data from {clientEndPoint}: {data}");
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            // Обработка ошибок при десериализации
+            Console.WriteLine(ex.Message, "Error handling received data.");
+        }
     }
 }

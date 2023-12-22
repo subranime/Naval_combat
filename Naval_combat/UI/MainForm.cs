@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Naval_combat.Common;
 using Naval_combat.Networking;
+using Newtonsoft.Json;
 
 namespace Naval_combat.UI
 {
@@ -20,7 +21,6 @@ namespace Naval_combat.UI
     {
         private static Logger staticLogger;
         private UDPClientManager udpClientManager;
-        private GameClient gameClient;
 
         public MainForm()
         {
@@ -42,14 +42,21 @@ namespace Naval_combat.UI
 
         private void StartGameButton_Click(object sender, EventArgs e)
         {
-            string startGameMessage = "StartGame";
+            // Создание JSON-события "StartGame"
+            JsonEvent startGameEvent = new JsonEvent { EventType = "StartGame" };
+            string startGameMessage = JsonConvert.SerializeObject(startGameEvent);
             udpClientManager.SendData(startGameMessage);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Создаем JSON-событие "Disconnect"
+            var disconnectEvent = new { EventType = "Disconnect" };
+
+            // Преобразуем объект в JSON
+            string disconnectMessage = JsonConvert.SerializeObject(disconnectEvent);
+
             // Отправляем сообщение на сервер о том, что клиент отключается
-            string disconnectMessage = "Disconnecting";
             udpClientManager.SendData(disconnectMessage);
 
             udpClientManager.Close();

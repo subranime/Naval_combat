@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Naval_combat_server
+namespace Naval_combat_server.Common
 {
     public enum LogLevel
     {
@@ -29,7 +29,7 @@ namespace Naval_combat_server
             }
 
             // Используем глобальный мьютекс с именем "Global\\MyLoggerMutex"
-            this.mutex = new Mutex(false, "Global\\MyLoggerMutex");
+            mutex = new Mutex(false, "Global\\MyLoggerMutex");
         }
 
         public void Log(LogLevel level, string message)

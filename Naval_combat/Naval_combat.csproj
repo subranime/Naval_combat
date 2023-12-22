@@ -50,8 +50,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AppSettings.cs" />
-    <Compile Include="GameClient.cs" />
+    <Compile Include="Common\Coordinates.cs" />
+    <Compile Include="Common\IDataContainer.cs" />
+    <Compile Include="Common\JsonEvent.cs" />
     <Compile Include="Common\Logger.cs" />
+    <Compile Include="Entities\EnemyShip.cs" />
+    <Compile Include="Entities\Field.cs" />
+    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\TorpedoLauncher.cs" />
     <Compile Include="GameLogic\GameEngine.cs" />
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
@@ -61,7 +67,6 @@
     </Compile>
     <Compile Include="Common\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\Ship.cs" />
     <Compile Include="Networking\UDPClientManager.cs" />
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
