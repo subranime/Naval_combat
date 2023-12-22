@@ -6,20 +6,27 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Newtonsoft.Json;
+using Naval_combat_server.Common;
+using Naval_combat_server.GameLogic;
+using Naval_combat_server.Entities;
 
-namespace Naval_combat_server
+namespace Naval_combat_server.Networking
 {
     public class UDPManager
     {
         private Socket udpSocket;
         private Thread receiveThread;
         private CancellationTokenSource cancellationTokenSource;
+        private GameEngine gameEngine;
 
         public delegate void DataReceivedEventHandler(string data, IPEndPoint clientEndPoint);
         public event DataReceivedEventHandler DataReceived;
 
-        public UDPManager(int port)
+        public UDPManager(int port, GameEngine gameEngine)
         {
+            this.gameEngine = gameEngine;
+
             udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpSocket.Bind(new IPEndPoint(IPAddress.Any, port));
 
@@ -38,16 +45,21 @@ namespace Naval_combat_server
                     byte[] data = new byte[1024];
                     int receivedBytes = udpSocket.ReceiveFrom(data, ref clientEndPoint);
 
-                    string message = Encoding.UTF8.GetString(data, 0, receivedBytes);
+                    string jsonString = Encoding.UTF8.GetString(data, 0, receivedBytes);
 
-                    if (message == "Disconnecting")
+                    // Попытка десериализации JSON
+                    try
                     {
-                        // Клиент отключился
-                        CloseConnection((IPEndPoint)clientEndPoint);
+                        // Парсинг JSON-объекта
+                        var jsonData = JsonConvert.DeserializeObject<IDataContainer>(jsonString);
+
+                        // Обработка полученных данных
+                        // Передача данных в GameEngine для обработки
+                        gameEngine.ProcessReceivedData(jsonData, clientEndPoint);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        OnDataReceived(message, (IPEndPoint)clientEndPoint);
+                        Console.WriteLine("Error deserializing JSON: " + ex.Message);
                     }
                 }
             }
@@ -66,6 +78,12 @@ namespace Naval_combat_server
             {
                 Console.WriteLine("Error in ReceiveData: " + ex.Message);
             }
+        }
+
+        private void ProcessReceivedData(IDataContainer jsonData, IPEndPoint clientEndPoint)
+        {
+            // Оповестите о получении данных
+            //OnDataReceived(jsonData.ToJson(), clientEndPoint);
         }
 
         protected virtual void OnDataReceived(string data, IPEndPoint clientEndPoint)
