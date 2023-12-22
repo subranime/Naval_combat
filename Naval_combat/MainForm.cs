@@ -17,39 +17,41 @@ namespace Naval_combat
 {
     public partial class MainForm : Form
     {
-        private TcpClientManager tcpClientManager;
-        private Logger logger;
+        private static Logger staticLogger;
+        private UDPClientManager udpClientManager;
         private GameClient gameClient;
 
         public MainForm()
         {
             InitializeComponent();
-            this.logger = new Logger(LogLevel.Info, $"{AppSettings.LogPath}client_log.txt");
-            this.tcpClientManager = new TcpClientManager(logger);
-            this.gameClient = new GameClient(tcpClientManager, gamePictureBox);
 
-            ConnectToServer();
+            staticLogger = new Logger(LogLevel.Info, $"{AppSettings.LogPath}client_log.txt");
+            this.udpClientManager = new UDPClientManager(staticLogger);
+
+            this.udpClientManager.DataReceived += OnDataReceived;
+
+            // Подключение к серверу
+            this.udpClientManager.Connect("127.0.0.1", 49153);
         }
 
-        private async void ConnectToServer()
+        private static void OnDataReceived(string data)
         {
-            if (await gameClient.ConnectAsync("127.0.0.1", 7777, AppSettings.NickName))
-            {
-                Start_game_button.Enabled = true;
-            }
+            staticLogger.Log(LogLevel.Info, $"Received data: {data}");
         }
 
         private void StartGameButton_Click(object sender, EventArgs e)
         {
-            gameClient.StartGame();
+            string startGameMessage = "StartGame";
+            udpClientManager.SendData(startGameMessage);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Закрываем соединение при закрытии формы
-            tcpClientManager.CloseConnection();
+            // Отправляем сообщение на сервер о том, что клиент отключается
+            string disconnectMessage = "Disconnecting";
+            udpClientManager.SendData(disconnectMessage);
+
+            udpClientManager.Close();
         }
-
-
     }
 }
