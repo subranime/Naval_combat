@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace Naval_combat
 {
@@ -15,6 +16,8 @@ namespace Naval_combat
     {
         private string logFilePath;
         private LogLevel logLevel;
+        private object fileLock = new object();
+        private Mutex mutex;
 
         public Logger(LogLevel logLevel, string logFilePath)
         {
@@ -25,6 +28,9 @@ namespace Naval_combat
             {
                 File.WriteAllText(logFilePath, string.Empty);
             }
+
+            // Используем глобальный мьютекс с именем "Global\\MyLoggerMutex"
+            this.mutex = new Mutex(false, "Global\\MyLoggerMutex");
         }
 
         public void Log(LogLevel level, string message)
@@ -38,9 +44,20 @@ namespace Naval_combat
 
             try
             {
-                if (!string.IsNullOrEmpty(logFilePath))
+                lock (fileLock)
                 {
-                    File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
+                    // Захватываем мьютекс перед входом в критическую секцию
+                    mutex.WaitOne();
+                    try
+                    {
+                        // Критическая секция
+                        File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
+                    }
+                    finally
+                    {
+                        // Освобождаем мьютекс после выхода из критической секции
+                        mutex.ReleaseMutex();
+                    }
                 }
             }
             catch (Exception ex)
