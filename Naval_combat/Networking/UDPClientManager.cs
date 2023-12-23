@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Naval_combat.Common;
+using Newtonsoft.Json;
+using Naval_combat.Entities;
 
 namespace Naval_combat.Networking
 {
@@ -16,7 +18,7 @@ namespace Naval_combat.Networking
         private static Logger staticLogger;
         private CancellationTokenSource cancellationTokenSource;
 
-        public delegate void DataReceivedEventHandler(string data);
+        public delegate void DataReceivedEventHandler(Game data);
         public event DataReceivedEventHandler DataReceived;
 
         public UDPClientManager(Logger logger)
@@ -40,12 +42,19 @@ namespace Naval_combat.Networking
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     EndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] data = new byte[1024];
+                    byte[] data = new byte[2048];
                     int receivedBytes;
 
                     try
                     {
                         receivedBytes = udpClient.ReceiveFrom(data, ref serverEndPoint);
+                        string jsonString = Encoding.UTF8.GetString(data, 0, receivedBytes);
+
+                        // Десериализация JSON в объект класса Game
+                        var gameData = JsonConvert.DeserializeObject<Game>(jsonString);
+
+                        OnDataReceived(gameData);
+
                     }
                     catch (SocketException ex) when (ex.SocketErrorCode == SocketError.Interrupted)
                     {
@@ -53,9 +62,7 @@ namespace Naval_combat.Networking
                         break;
                     }
 
-                    string message = Encoding.UTF8.GetString(data, 0, receivedBytes);
-
-                    OnDataReceived(message);
+                    
                 }
             }
             catch (Exception ex)
@@ -65,7 +72,7 @@ namespace Naval_combat.Networking
             }
         }
 
-        protected virtual void OnDataReceived(string data)
+        protected virtual void OnDataReceived(Game data)
         {
             DataReceived?.Invoke(data);
         }
@@ -84,9 +91,10 @@ namespace Naval_combat.Networking
                     return;
 
                 byte[] bytes = Encoding.UTF8.GetBytes(data);
-                udpClient.Send(bytes, SocketFlags.None);
+                udpClient.Send(bytes, bytes.Length, SocketFlags.None);
             }
         }
+
 
         public void Close()
         {

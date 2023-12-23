@@ -9,11 +9,16 @@ using Naval_combat.Common;
 
 namespace Naval_combat.Entities
 {
-    public class Player : IDataContainer
+    public class Player
     {
         public string NickName { get; set; }
         public int Points { get; set; }
         public int RemainingTorpedoes { get; set; }
+
+        // Конструктор по умолчанию для десериализации JSON
+        public Player()
+        {
+        }
 
         public Player(string nickName)
         {
@@ -22,23 +27,6 @@ namespace Naval_combat.Entities
             RemainingTorpedoes = 10;
         }
 
-        // Реализация методов интерфейса IDataContainer
-        public string ToJson()
-        {
-            // Преобразование объекта в JSON
-            return JsonConvert.SerializeObject(this);
-        }
-
-        public void FromJson(string json)
-        {
-            // Преобразование JSON в объект
-            Player player = JsonConvert.DeserializeObject<Player>(json);
-
-            // Копирование данных из преобразованного объекта в текущий объект
-            NickName = player.NickName;
-            Points = player.Points;
-            RemainingTorpedoes = player.RemainingTorpedoes;
-        }
     }
 
 }

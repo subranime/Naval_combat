@@ -8,32 +8,36 @@ using System.Threading.Tasks;
 
 namespace Naval_combat_server.Entities
 {
-    public class Field : IDataContainer
+    public class Field
     {
-        public Player Player { get; set; }
         public List<EnemyShip> EnemyShips { get; set; }
 
-        public Field(Player player, List<EnemyShip> enemyShips)
+        // Конструктор без параметров
+        public Field()
         {
-            Player = player;
+        }
+
+        // Конструктор с параметрами
+        public Field(List<EnemyShip> enemyShips)
+        {
             EnemyShips = enemyShips;
         }
 
-        // Реализация методов интерфейса IDataContainer
-        public string ToJson()
+        public void UpdateEnemyShips(List<EnemyShip> newEnemyShips)
         {
-            // Преобразование объекта в JSON
-            return JsonConvert.SerializeObject(this);
+            EnemyShips = newEnemyShips;
         }
 
-        public void FromJson(string json)
+        public void GenerateEnemyShips()
         {
-            // Преобразование JSON в объект
-            Field field = JsonConvert.DeserializeObject<Field>(json);
-
-            // Копирование данных из преобразованного объекта в текущий объект
-            Player = field.Player;
-            EnemyShips = field.EnemyShips;
+            // Генерация случайных вражеских кораблей
+            List<EnemyShip> enemyShips = new List<EnemyShip>();
+            for (int i = 0; i < 10; i++)
+            {
+                enemyShips.Add(new EnemyShip());
+            }
+            this.EnemyShips = enemyShips;
         }
     }
+
 }

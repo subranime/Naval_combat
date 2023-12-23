@@ -16,12 +16,18 @@ namespace Naval_combat.Entities
         Medium,
         Large
     }
+    public enum MovementDirection
+    {
+        Left,
+        Right
+    }
 
-    public class EnemyShip : IDataContainer
+    public class EnemyShip
     {
         private static readonly Random random = new Random();
 
         public ShipSize ShipSize { get; set; }
+        public MovementDirection Direction { get; set; }
         public int Speed { get; set; }
         public Coordinates Coordinates { get; set; }
         public int Width { get; set; }
@@ -29,9 +35,17 @@ namespace Naval_combat.Entities
 
         public EnemyShip()
         {
+            ShipSize = GetRandomShipSize();
             GenerateRandomSize();
             Coordinates = GenerateRandomCoordinates();
             Speed = CalculateSpeedBasedOnSize();
+            Direction = GenerateRandomDirection();
+        }
+
+        private ShipSize GetRandomShipSize()
+        {
+            Array shipSizes = Enum.GetValues(typeof(ShipSize));
+            return (ShipSize)shipSizes.GetValue(random.Next(shipSizes.Length));
         }
 
         private void GenerateRandomSize()
@@ -65,6 +79,10 @@ namespace Naval_combat.Entities
                 Y = random.Next(251 - Height)  // От 0 до (250 - Height)
             };
         }
+        private MovementDirection GenerateRandomDirection()
+        {
+            return (MovementDirection)random.Next(2);
+        }
 
         private int CalculateSpeedBasedOnSize()
         {
@@ -83,25 +101,6 @@ namespace Naval_combat.Entities
             }
         }
 
-        // Реализация методов интерфейса IDataContainer
-        public string ToJson()
-        {
-            // Преобразование объекта в JSON
-            return JsonConvert.SerializeObject(this);
-        }
-
-        public void FromJson(string json)
-        {
-            // Преобразование JSON в объект
-            EnemyShip enemyShip = JsonConvert.DeserializeObject<EnemyShip>(json);
-
-            // Копирование данных из преобразованного объекта в текущий объект
-            ShipSize = enemyShip.ShipSize;
-            Speed = enemyShip.Speed;
-            Coordinates = enemyShip.Coordinates;
-            Width = enemyShip.Width;
-            Height = enemyShip.Height;
-        }
     }
 
 }
