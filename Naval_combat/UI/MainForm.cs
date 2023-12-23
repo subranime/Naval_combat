@@ -12,8 +12,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Naval_combat.Common;
+using Naval_combat.Entities;
 using Naval_combat.Networking;
 using Newtonsoft.Json;
+using Naval_combat.GameLogic;
 
 namespace Naval_combat.UI
 {
@@ -21,45 +23,80 @@ namespace Naval_combat.UI
     {
         private static Logger staticLogger;
         private UDPClientManager udpClientManager;
+        private string playerName;
+        private Game game;
+        private GameEngine gameEngine;
+        private Timer updateTimer;
 
-        public MainForm()
+        public MainForm(string playerName, UDPClientManager udpClientManager)
         {
             InitializeComponent();
 
-            staticLogger = new Logger(LogLevel.Info, $"{AppSettings.LogPath}client_log.txt");
-            this.udpClientManager = new UDPClientManager(staticLogger);
+            staticLogger = Login_form.StaticLogger;
+            this.playerName = playerName;
+            this.udpClientManager = udpClientManager;
+            this.game = new Game(playerName);
+
+            // Создаем экземпляр GameEngine
+            this.gameEngine = new GameEngine(gamePictureBox);
 
             this.udpClientManager.DataReceived += OnDataReceived;
 
-            // Подключение к серверу
-            this.udpClientManager.Connect("127.0.0.1", 49153);
+            // Отправка стартовых данных при инициализации формы
+            SendStartGameData();
+
+            // Инициализация таймера для обновлений каждые 1000 миллисекунд (1 секунда)
+            updateTimer = new Timer();
+            updateTimer.Interval = 2000;
+            updateTimer.Tick += UpdateTimer_Tick;
+            updateTimer.Start();
         }
 
-        private static void OnDataReceived(string data)
+        private async void SendStartGameData()
         {
-            staticLogger.Log(LogLevel.Info, $"Received data: {data}");
+            this.game.GameState = "StartGame";
+            // Преобразование объекта в JSON
+            string startGameMessage = JsonConvert.SerializeObject(this.game);
+
+            // Отправка данных на сервер асинхронно
+            await Task.Run(() => udpClientManager.SendData(startGameMessage));
         }
 
-        private void StartGameButton_Click(object sender, EventArgs e)
+
+        private async void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            // Создание JSON-события "StartGame"
-            JsonEvent startGameEvent = new JsonEvent { EventType = "StartGame" };
-            string startGameMessage = JsonConvert.SerializeObject(startGameEvent);
-            udpClientManager.SendData(startGameMessage);
+            // Запрос на обновление данных с сервера
+            this.game.GameState = "Update";
+            // Преобразование объекта в JSON
+            string startGameMessage = JsonConvert.SerializeObject(this.game);
+
+            // Отправка данных на сервер асинхронно
+            await Task.Run(() => udpClientManager.SendData(startGameMessage));
         }
+
+
+        private void OnDataReceived(Game data)
+        {
+            // Передача объекта Game в метод GameEngine
+            this.gameEngine.UpdateUI(data);
+        }
+
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Создаем JSON-событие "Disconnect"
-            var disconnectEvent = new { EventType = "Disconnect" };
-
-            // Преобразуем объект в JSON
-            string disconnectMessage = JsonConvert.SerializeObject(disconnectEvent);
-
-            // Отправляем сообщение на сервер о том, что клиент отключается
+            this.game.GameState = "Disconnect";
+            // Преобразование объекта в JSON
+            string disconnectMessage = JsonConvert.SerializeObject(this.game);
+            // Отправка данных на сервер асинхронно
             udpClientManager.SendData(disconnectMessage);
-
+            
             udpClientManager.Close();
+        }
+
+        private void Shoot_button_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

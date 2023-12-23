@@ -28,21 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Start_game_button = new System.Windows.Forms.Button();
             this.gamePictureBox = new System.Windows.Forms.PictureBox();
             this.Shoot_button = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // Start_game_button
-            // 
-            this.Start_game_button.Location = new System.Drawing.Point(12, 534);
-            this.Start_game_button.Name = "Start_game_button";
-            this.Start_game_button.Size = new System.Drawing.Size(98, 27);
-            this.Start_game_button.TabIndex = 2;
-            this.Start_game_button.Text = "Старт";
-            this.Start_game_button.UseVisualStyleBackColor = true;
-            this.Start_game_button.Click += new System.EventHandler(this.StartGameButton_Click);
             // 
             // gamePictureBox
             // 
@@ -60,6 +49,7 @@
             this.Shoot_button.TabIndex = 4;
             this.Shoot_button.Text = "Выстрел";
             this.Shoot_button.UseVisualStyleBackColor = true;
+            this.Shoot_button.Click += new System.EventHandler(this.Shoot_button_Click);
             // 
             // MainForm
             // 
@@ -68,7 +58,6 @@
             this.ClientSize = new System.Drawing.Size(526, 587);
             this.Controls.Add(this.Shoot_button);
             this.Controls.Add(this.gamePictureBox);
-            this.Controls.Add(this.Start_game_button);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
@@ -79,7 +68,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button Start_game_button;
         private System.Windows.Forms.PictureBox gamePictureBox;
         private System.Windows.Forms.Button Shoot_button;
     }

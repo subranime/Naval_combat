@@ -56,9 +56,16 @@
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Entities\EnemyShip.cs" />
     <Compile Include="Entities\Field.cs" />
+    <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\TorpedoLauncher.cs" />
     <Compile Include="GameLogic\GameEngine.cs" />
+    <Compile Include="UI\Login_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Login_form.Designer.cs">
+      <DependentUpon>Login_form.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,6 +75,9 @@
     <Compile Include="Common\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\UDPClientManager.cs" />
+    <EmbeddedResource Include="UI\Login_form.resx">
+      <DependentUpon>Login_form.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -79,6 +89,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -94,6 +105,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Submarine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\3117992.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sub50x50.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

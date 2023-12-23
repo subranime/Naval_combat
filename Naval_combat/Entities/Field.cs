@@ -8,32 +8,23 @@ using Naval_combat.Common;
 
 namespace Naval_combat.Entities
 {
-    public class Field : IDataContainer
+    public class Field
     {
-        public Player Player { get; set; }
         public List<EnemyShip> EnemyShips { get; set; }
 
-        public Field(Player player, List<EnemyShip> enemyShips)
+        // Конструктор без параметров
+        public Field()
         {
-            Player = player;
+            // Инициализация EnemyShips по умолчанию, чтобы избежать NullReferenceException
+            EnemyShips = new List<EnemyShip>();
+        }
+
+        // Конструктор с параметрами
+        public Field(List<EnemyShip> enemyShips)
+        {
             EnemyShips = enemyShips;
         }
 
-        // Реализация методов интерфейса IDataContainer
-        public string ToJson()
-        {
-            // Преобразование объекта в JSON
-            return JsonConvert.SerializeObject(this);
-        }
-
-        public void FromJson(string json)
-        {
-            // Преобразование JSON в объект
-            Field field = JsonConvert.DeserializeObject<Field>(json);
-
-            // Копирование данных из преобразованного объекта в текущий объект
-            Player = field.Player;
-            EnemyShips = field.EnemyShips;
-        }
     }
 }
+
